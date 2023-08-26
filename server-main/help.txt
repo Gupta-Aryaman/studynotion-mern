@@ -1,0 +1,32 @@
+npm init -y //initialize node project
+create required folders and files - 
+	folders-
+		config
+		controllers
+		middleswares
+		models
+		routes
+		utils
+	files-
+		.env
+		index.js
+	
+npm i express //install express
+npm i nodemon //install nodemon
+
+in package.json change scripts to - 
+	"scripts": {
+		"start": "node index.js",
+		"dev": "nodemon index.js"
+	}
+
+
+npm i dotenv	//
+npm i mongoose	//
+npm i cookie-parser	//	
+npm i jsonwebtoken	//jwt tokens
+npm i nodemailer	//to send mail
+npm i otp-generator //to generate otp
+npm i bcrypt //to hash passwords
+
+create database.js in config folder
