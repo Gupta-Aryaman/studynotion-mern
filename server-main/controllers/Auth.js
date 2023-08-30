@@ -190,7 +190,7 @@ exports.login = async (req, res) => {
         }
 
         //check if user exists
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         if(!user){
             return res.status(400).json({
                 success: false,
@@ -254,13 +254,14 @@ exports.login = async (req, res) => {
 exports.changePassword = async (req, res) => {
     //get data from req body
     const { 
+        email,
         oldpassword,
         newpassword,
         confirmPassword, 
     } = req.body;
 
     // get oldpass, newpass, confirmpass
-    if(!oldpassword || !newpassword || !confirmpassword){
+    if(!oldpassword || !newpassword || !confirmpassword || !email){
         return res.status(400).json({
             success: false,
             message: "All fields are required",
@@ -269,11 +270,32 @@ exports.changePassword = async (req, res) => {
 
     // validate data
     if(oldpassword !== confirmpassword){
-        
+        return res.status(400).json({
+            success: false,
+            message: "Passwords do not match",
+        });
     }
 
+    const user = await User.findOne({ email });
     // check if oldpass is correct
+    const isPasswordCorrect = await bcrypt.compare(oldpassword, user.password);
+    if(!isPasswordCorrect){
+        return res.status(401).json({
+            success: false,
+            message: "Old password is incorrect",
+        });
+    }
+
     //update pwd in db
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
     //send mail password updated
+    
     //return response
+    return res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+    });
 }
